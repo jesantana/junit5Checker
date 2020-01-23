@@ -7,6 +7,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import static com.plugin.StatusPrinter.printStatus;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Goal which touches a timestamp file.
- */
+
 @Mojo( name = "junit5Checker", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
 public class Junit5Checker extends AbstractMojo
 {
@@ -37,15 +37,20 @@ public class Junit5Checker extends AbstractMojo
     }
 
     public void analyzeProject(String path) throws IOException {
-        Files.walk(Paths.get(path))
+    	JunitStatus status = new JunitStatus();
+    	
+    	Files.walk(Paths.get(path))
                 .filter(this::needToCheckFile)
-                .forEach(this::analyzeFile);
+                .forEach(currentFilepath->this.analyzeFile(currentFilepath, status));
+    	
+    	printStatus(getLog(), status);
     }
 
 
-    public void analyzeFile(Path path) {
+    public void analyzeFile(Path path, JunitStatus status) {
         boolean is4 = false;
         boolean is5 = false;
+        
 
         try (BufferedReader br = Files.newBufferedReader(path)) {
             String line;
@@ -65,13 +70,17 @@ public class Junit5Checker extends AbstractMojo
         }
 
         if(is4 && is5) {
-            getLog().info("JUNIT 4 AND 5 " + path);
+        	status.addMixed();
+            getLog().debug("JUNIT 4 AND 5 " + path);
         } else if(is4){
-            getLog().info("JUNIT 4 " + path);
+        	status.addJunit4();
+            getLog().debug("JUNIT 4 " + path);
         } else if(is5) {
-            getLog().info("JUNIT 5 " + path);
+        	status.addJunit5();
+            getLog().debug("JUNIT 5 " + path);
         } else {
-            getLog().info("Weird File " + path);
+        	status.addWeird();
+            getLog().debug("Weird File " + path);
         }
 
     }
@@ -80,7 +89,7 @@ public class Junit5Checker extends AbstractMojo
         boolean shouldCheck = Files.isRegularFile(path) && path.toString().endsWith("Test.java");
 
         if(!shouldCheck) {
-            getLog().info("Skipping checking of file " + path.getFileName());
+            getLog().debug("Skipping checking of file " + path.getFileName());
         }
 
         return shouldCheck;
@@ -94,4 +103,6 @@ public class Junit5Checker extends AbstractMojo
     public boolean isJunit5(String line){
         return line.contains("import org.junit.jupiter");
     }
+    
+    
 }
