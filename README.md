@@ -7,5 +7,6 @@ This is a maven plugin to output during your build how many of your junit tests 
 TODOs:
 * Publish in Maven Central Repository
 * Output in colors
+* Change the phase name and config in the Java class
 * Improve the readme to display an example of how to use it
 
