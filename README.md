@@ -4,3 +4,8 @@ This is a maven plugin to output during your build how many of your junit tests 
 
 ![image](https://i.ibb.co/JksSCR6/Screenshot-from-2020-01-23-19-03-50.png)
 
+TODOs:
+* Publish in Maven Central Repository
+* Output in colors
+* Improve the readme to display an example of how to use it
+
