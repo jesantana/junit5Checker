@@ -8,6 +8,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import static com.plugin.StatusPrinter.printStatus;
+import static com.plugin.StatusPrinter.writeToFile;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
-@Mojo( name = "junit5Checker", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
+@Mojo( name = "junit5Checker", defaultPhase = LifecyclePhase.TEST )
 public class Junit5Checker extends AbstractMojo
 {
     /**
@@ -25,6 +26,9 @@ public class Junit5Checker extends AbstractMojo
      */
     @Parameter( defaultValue = "${project.build.testSourceDirectory}", property = "testDirectory", required = true )
     private File testDirectory;
+    
+    @Parameter( defaultValue = "${project.build.directory}", property = "targetDirectory", required = true )
+    private File targetDirectory;
 
     public void execute()
         throws MojoExecutionException
@@ -44,6 +48,7 @@ public class Junit5Checker extends AbstractMojo
                 .forEach(currentFilepath->this.analyzeFile(currentFilepath, status));
     	
     	printStatus(getLog(), status);
+    	writeToFile(targetDirectory.getPath() + "/junitChecker.txt" ,status);
     }
 
 
@@ -103,6 +108,4 @@ public class Junit5Checker extends AbstractMojo
     public boolean isJunit5(String line){
         return line.contains("import org.junit.jupiter");
     }
-    
-    
 }

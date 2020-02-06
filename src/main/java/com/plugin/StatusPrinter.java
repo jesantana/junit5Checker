@@ -1,12 +1,17 @@
 package com.plugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.logging.Log;
 
+import lombok.SneakyThrows;
+
 public class StatusPrinter {
-	
+
+    
 	private static int MAX_LINE_WIDTH = 120;
 	
 	static void printStatus(Log log, JunitStatus status) {
@@ -15,6 +20,19 @@ public class StatusPrinter {
 			   "Number of tests mixed: " + status.getNumberOfMixed(),
 			   "Number of files inside test folder that don't contain a test : " + status.getNumberOfWeirdFiles()
 		).forEach(current -> log.info(current));
+    }
+	
+	@SneakyThrows
+	static void writeToFile(String filePath, JunitStatus status) {
+		String allText =  getBox("NUMBER OF TESTS MIGRATED TO JUNIT 5: " + status.getNumberOfJunit5(),
+			   "Number of tests in junit 4: " + status.getNumberOfJunit4(),
+			   "Number of tests mixed: " + status.getNumberOfMixed(),
+			   "Number of files inside test folder that don't contain a test : " + status.getNumberOfWeirdFiles()
+		).stream().reduce("", (acc,current)-> acc + "\n" +current);
+		
+	    File file = new File(filePath);
+	    
+	    FileUtils.writeStringToFile(file, allText, "UTF-8");	    
     }
 	
 	
