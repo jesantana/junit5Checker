@@ -75,7 +75,7 @@ public class Junit5Checker extends AbstractMojo
         }
 
         if(is4 && is5) {
-        	status.addMixed();
+        	status.addMixed(path.toString());
             getLog().debug("JUNIT 4 AND 5 " + path);
         } else if(is4){
         	status.addJunit4();
@@ -102,10 +102,11 @@ public class Junit5Checker extends AbstractMojo
 
 
     public boolean isJunit4(String line){
-        return line.contains("import org.junit.Test");
+        return line.matches("import( static)? org.junit.[A-Z].*$");
     }
 
     public boolean isJunit5(String line){
         return line.contains("import org.junit.jupiter");
     }
+    
 }

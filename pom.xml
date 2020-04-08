@@ -7,7 +7,7 @@
 
   <groupId>external.com.github.jesantana</groupId>
   <artifactId>junit5-checker-maven-plugin</artifactId>
-  <version>1.0</version>
+  <version>1.2</version>
   <packaging>maven-plugin</packaging>
 
   <name>junit5-checker-maven-plugin Maven Plugin</name>

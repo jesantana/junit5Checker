@@ -33,6 +33,12 @@ public class Junit5CheckerTest
     public void testSomethingWhichDoesNotNeedTheMojoAndProbablyShouldBeExtractedIntoANewClassOfItsOwn()
     {
         assertTrue( true );
+      
+        System.out.println("import static org.junit.Assert.assertThat;".matches("import( static)? org.junit.[A-Z].*$"));
+        
+        System.out.println("import org.junit.jupiter.api.Test".matches("import( static)? org.junit.[A-Z].*$"));
+        
+        System.out.println("import org.junit.Test;".matches("import( static)? org.junit.[A-Z].*$"));
     }
 
 }
